@@ -3,6 +3,7 @@ use std::{error::Error, fmt::Display, fs, path::PathBuf, str::FromStr};
 use serde::{Deserialize, Deserializer};
 
 const BASEURL: &str = "https://kias.nie.re.kr/home/for/for02001l.do";
+const BASEURL_ITEM: &str = "https://kias.nie.re.kr/home/for/for02002v.do";
 
 type N = u32;
 
@@ -55,7 +56,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 	for item in list.iter().take(1) {
 		println!("{item}");
 
-		let item_data = ureq::post(BASEURL)
+		let item_data = ureq::post(BASEURL_ITEM)
 			.set("Accept", "application/json")
 			.send_form(&[
 				("clsSno", &item.to_string()),
