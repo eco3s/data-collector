@@ -1,6 +1,8 @@
 use std::error::Error;
 
-use super::list::{BASEURL, N};
+use super::list::N;
+
+const BASEURL: &str = "https://kias.nie.re.kr/home/for/for02002v.do";
 
 pub fn get_items(list: Vec<N>) -> Result<Vec<String>, Box<dyn Error>> {
 	let mut res = vec![];
