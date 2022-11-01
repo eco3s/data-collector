@@ -156,3 +156,13 @@ macro_rules! docs_gen {
 }
 
 pub(crate) use docs_gen;
+
+macro_rules! swap {
+	($x:expr, $y:expr) => {{
+		let tmp = $y;
+
+		($x, tmp)
+	}};
+}
+
+pub(crate) use swap;

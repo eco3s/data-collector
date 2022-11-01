@@ -45,6 +45,8 @@ impl FetchBulk for FetchBulkItem {
 
 	fn get_urls(&self) -> &Vec<Self::Url> { &self.urls }
 
+	fn into_urls(self) -> Vec<Self::Url> { self.urls }
+
 	fn new(urls: Vec<Self::Url>) -> Self { Self { urls } }
 
 	fn fetch(url: &Self::Url) -> Result<Self::Output, Self::Error> {
@@ -72,11 +74,11 @@ fn main() -> Result<(), Box<dyn Error>> {
 	let fetch_bulk_item = FetchBulkItem::new(list);
 	let items = fetch_bulk_item.fetch_all()?;
 
-	for (i, item) in items.iter().enumerate() {
+	for (key, item) in items.iter() {
 		let data = parse_item(item)?;
 
 		let mut file_path = path.clone();
-		file_path.push(format!("{i}.json"));
+		file_path.push(format!("{key}.json"));
 		fs::write(file_path, item)?;
 
 		let mut file_path = export_path.clone();
@@ -89,7 +91,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 			data_collector::schema::SerializableType::Sexpr => "lisp",
 		};
 
-		file_path.push(format!("{i}.{ext}"));
+		file_path.push(format!("{key}.{ext}"));
 		fs::write(
 			file_path,
 			data.serialize_into(file_type)?,
