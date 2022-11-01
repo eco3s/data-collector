@@ -25,8 +25,20 @@ fn main() -> Result<(), Box<dyn Error>> {
 		fs::write(file_path, item)?;
 
 		let mut file_path = export_path.clone();
-		file_path.push(format!("{i}.json"));
-		fs::write(file_path, serde_json::to_string(&data)?)?;
+		let file_type = data_collector::schema::SerializableType::Json;
+
+		let ext = match file_type {
+			data_collector::schema::SerializableType::Json => "json",
+			data_collector::schema::SerializableType::Yaml => "yaml",
+			data_collector::schema::SerializableType::Ron => "ron",
+			data_collector::schema::SerializableType::Sexpr => "lisp",
+		};
+
+		file_path.push(format!("{i}.{ext}"));
+		fs::write(
+			file_path,
+			data.serialize_into(file_type)?,
+		)?;
 	}
 
 	Ok(())

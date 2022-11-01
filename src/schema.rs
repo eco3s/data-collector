@@ -1,3 +1,8 @@
+use std::{
+	error::Error,
+	fmt::{self, Display},
+};
+
 use serde::{Deserialize, Serialize};
 
 use crate::downloader::list::N;
@@ -15,6 +20,37 @@ pub struct Species {
 	pub docs: Vec<String>,
 	pub r#type: Type,
 	pub data: Data,
+}
+
+pub enum SerializableType {
+	Json,
+	Yaml,
+	Ron,
+	Sexpr,
+}
+
+impl Species {
+	pub fn serialize_into(
+		&self,
+		r#type: SerializableType,
+	) -> Result<String, Box<dyn Error>> {
+		Ok(match r#type {
+			SerializableType::Json => self.to_string(),
+			SerializableType::Yaml => serde_yaml::to_string(self)?,
+			SerializableType::Ron => ron::to_string(self)?,
+			SerializableType::Sexpr => serde_lexpr::to_string(self)?,
+		})
+	}
+}
+
+impl Display for Species {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
+		write!(
+			f,
+			"{}",
+			serde_json::to_string(self).or(Err(std::fmt::Error))?,
+		)
+	}
 }
 
 #[derive(Serialize)]
