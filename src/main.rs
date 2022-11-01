@@ -22,7 +22,7 @@ impl JsonFetcher for ListFetcher {
 
 	fn fetch(&self) -> Result<String, Self::FetchError> {
 		Ok(
-			ureq::request_url("post", &LIST_ENDPOINT)
+			ureq::request_url("POST", &LIST_ENDPOINT)
 				.set("Accept", "application/json")
 				.send_form(&[
 					("searchYn", "Y"),
