@@ -12,7 +12,6 @@ where
 		.map_err(de::Error::custom)
 }
 
-#[allow(dead_code)]
 pub fn empty_string_to_none<'de, D>(
 	deserializer: D,
 ) -> Result<Option<String>, D::Error>
@@ -22,7 +21,6 @@ where D: Deserializer<'de> {
 	Ok(if s.is_empty() { None } else { Some(s) })
 }
 
-#[allow(dead_code)]
 pub fn split_string<'de, D>(deserializer: D) -> Result<Vec<String>, D::Error>
 where D: Deserializer<'de> {
 	Ok(String::deserialize(deserializer)?

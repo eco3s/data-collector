@@ -1,4 +1,3 @@
-#[allow(unused_macros)]
 macro_rules! tree_gen {
 	(
 		@ $output:path[$item_output:path]
@@ -73,9 +72,8 @@ macro_rules! tree_gen {
 	};
 }
 
-#[allow(unused_imports)] pub(crate) use tree_gen;
+pub(crate) use tree_gen;
 
-#[allow(unused_macros)]
 macro_rules! docs_gen {
 	($name:ident[$($num:literal)->+]) => {
 		paste::paste! {
@@ -157,4 +155,4 @@ macro_rules! docs_gen {
 	};
 }
 
-#[allow(unused_imports)] pub(crate) use docs_gen;
+pub(crate) use docs_gen;
