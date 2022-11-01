@@ -2,8 +2,6 @@ use std::{error::Error, fmt::Display, str::FromStr};
 
 use serde::Deserialize;
 
-pub const BASEURL: &str = "https://kias.nie.re.kr/home/for/for02001l.do";
-
 #[derive(Deserialize)]
 #[serde(bound = "T: for <'a>Deserialize<'a>")]
 struct DeserializeList<T>

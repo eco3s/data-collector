@@ -1,12 +1,15 @@
+mod r#static;
+
 use std::{error::Error, fs, path::PathBuf};
 
 use data_collector::{
 	downloader::{
-		item::get_items,
-		list::{JsonFetcher, List, BASEURL},
+		item::FetchBulk,
+		list::{JsonFetcher, List},
 	},
 	parse::parse_item,
 };
+use r#static::{ITEM_ENDPOINT, LIST_ENDPOINT};
 
 const DOWNLOAD_PATH: &str = "./downloads/";
 const EXPORT_PATH: &str = "./out/";
@@ -18,15 +21,59 @@ impl JsonFetcher for ListFetcher {
 	type Output = List<u32>;
 
 	fn fetch(&self) -> Result<String, Self::FetchError> {
-		Ok(ureq::post(BASEURL)
-			.set("Accept", "application/json")
-			.send_form(&[
-				("searchYn", "Y"),
-				("searchClsGbn", "eco"),
-				("pageUnit", &self.0.to_string()),
-			])?
-			.into_string()?)
+		Ok(
+			ureq::request_url("post", &LIST_ENDPOINT)
+				.set("Accept", "application/json")
+				.send_form(&[
+					("searchYn", "Y"),
+					("searchClsGbn", "eco"),
+					("pageUnit", &self.0.to_string()),
+				])?
+				.into_string()?,
+		)
 	}
+}
+
+struct FetchBulkImpl {
+	urls: Vec<u32>,
+}
+
+impl FetchBulk for FetchBulkImpl {
+	type Output = Result<String, ureq::Error>;
+	type Url = u32;
+
+	fn get_urls(&self) -> &Vec<Self::Url> { &self.urls }
+
+	fn new(urls: Vec<Self::Url>) -> Self { Self { urls } }
+
+	fn fetch(url: &Self::Url) -> Self::Output {
+		Ok(
+			ureq::request_url("POST", &ITEM_ENDPOINT)
+				.set("Accept", "application/json")
+				.send_form(&[
+					("clsSno", &url.to_string()),
+					("searchClsGbn", "eco"),
+				])?
+				.into_string()?,
+		)
+	}
+}
+
+pub fn get_items(list: Vec<u32>) -> Result<Vec<String>, Box<ureq::Error>> {
+	list.iter()
+		.map(FetchBulkImpl::fetch)
+		.map(|v| v.map_err(Box::new))
+		.collect::<Result<Vec<_>, _>>()
+}
+
+pub fn get_items_parallel(
+	list: Vec<u32>,
+) -> Result<Vec<String>, Box<ureq::Error>> {
+	FetchBulkImpl::new(list)
+		.fetch_all()
+		.into_iter()
+		.map(|v| v.map_err(Box::new))
+		.collect::<Result<Vec<_>, _>>()
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
