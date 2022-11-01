@@ -34,19 +34,20 @@ impl JsonFetcher for ListFetcher {
 	}
 }
 
-struct FetchBulkImpl {
+struct FetchBulkItem {
 	urls: Vec<u32>,
 }
 
-impl FetchBulk for FetchBulkImpl {
-	type Output = Result<String, ureq::Error>;
+impl FetchBulk for FetchBulkItem {
+	type Error = ureq::Error;
+	type Output = String;
 	type Url = u32;
 
 	fn get_urls(&self) -> &Vec<Self::Url> { &self.urls }
 
 	fn new(urls: Vec<Self::Url>) -> Self { Self { urls } }
 
-	fn fetch(url: &Self::Url) -> Self::Output {
+	fn fetch(url: &Self::Url) -> Result<Self::Output, Self::Error> {
 		Ok(
 			ureq::request_url("POST", &ITEM_ENDPOINT)
 				.set("Accept", "application/json")
@@ -59,23 +60,6 @@ impl FetchBulk for FetchBulkImpl {
 	}
 }
 
-pub fn get_items(list: Vec<u32>) -> Result<Vec<String>, Box<ureq::Error>> {
-	list.iter()
-		.map(FetchBulkImpl::fetch)
-		.map(|v| v.map_err(Box::new))
-		.collect::<Result<Vec<_>, _>>()
-}
-
-pub fn get_items_parallel(
-	list: Vec<u32>,
-) -> Result<Vec<String>, Box<ureq::Error>> {
-	FetchBulkImpl::new(list)
-		.fetch_all()
-		.into_iter()
-		.map(|v| v.map_err(Box::new))
-		.collect::<Result<Vec<_>, _>>()
-}
-
 fn main() -> Result<(), Box<dyn Error>> {
 	let path = PathBuf::from(DOWNLOAD_PATH);
 	let export_path = PathBuf::from(EXPORT_PATH);
@@ -85,7 +69,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 	let list_fetcher = ListFetcher(35);
 	let list = list_fetcher.fetch_and_parse()?.into();
 
-	let items = get_items(list)?;
+	let fetch_bulk_item = FetchBulkItem::new(list);
+	let items = fetch_bulk_item.fetch_all()?;
 
 	for (i, item) in items.iter().enumerate() {
 		let data = parse_item(item)?;
