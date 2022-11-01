@@ -1,6 +1,6 @@
-use std::{error::Error, fmt::Display, str::FromStr};
+use std::error::Error;
 
-use serde::{Deserialize, Deserializer};
+use serde::Deserialize;
 
 pub const BASEURL: &str = "https://kias.nie.re.kr/home/for/for02001l.do";
 
@@ -24,18 +24,8 @@ impl From<List> for Vec<N> {
 
 #[derive(Deserialize, Debug)]
 struct Item {
-	#[serde(deserialize_with = "string_to_number")]
+	#[serde(deserialize_with = "crate::utils::deserializers::parse_number")]
 	cls_sno: N,
-}
-
-fn string_to_number<'de, T, D>(deserializer: D) -> Result<T, D::Error>
-where
-	D: Deserializer<'de>,
-	T: FromStr + Deserialize<'de>,
-	<T as FromStr>::Err: Display, {
-	String::deserialize(deserializer)?
-		.parse::<T>()
-		.map_err(serde::de::Error::custom)
 }
 
 pub fn get_list() -> Result<Vec<N>, Box<dyn Error>> {
