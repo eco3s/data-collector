@@ -1,6 +1,6 @@
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 
-use super::list::N;
+type N = u32;
 
 const BASEURL: &str = "https://kias.nie.re.kr/home/for/for02002v.do";
 

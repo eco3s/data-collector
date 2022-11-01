@@ -2,10 +2,7 @@ use std::error::Error;
 
 use serde::Deserialize;
 
-use crate::{
-	downloader::list::N,
-	schema::{self, Group},
-};
+use crate::schema::{self, Group};
 
 #[derive(Deserialize, Debug)]
 struct Name {
@@ -46,7 +43,7 @@ struct Common {
 
 	#[serde(rename(deserialize = "cls_sno"))]
 	#[serde(deserialize_with = "crate::utils::deserializers::parse_number")]
-	id: N,
+	id: u32,
 
 	#[serde(flatten)]
 	taxonomic_tree: TaxonomicTree,

@@ -5,11 +5,9 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 
-use crate::downloader::list::N;
-
 #[derive(Serialize)]
 pub struct Species {
-	pub id: N,
+	pub id: u32,
 	pub name: LocalName,
 	pub scientific_name: String,
 	pub group: Group,
