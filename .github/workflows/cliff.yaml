@@ -20,3 +20,9 @@ jobs:
           OUTPUT: CHANGELOG.md
       - name: Print the changelog
         run: cat "${{ steps.git-cliff.outputs.changelog }}"
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'auto(CHANGELOG): update `CHANGELOG.md` file'
+          commit_options: '--no-verify --signoff'
+          file_pattern: 'CHANGELOG.md'
+          commit_user_name: Git Cliff
