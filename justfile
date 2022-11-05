@@ -1,9 +1,9 @@
 # cargo executable
 cargo := 'cargo'
 
-# debug or release mode which will used for contexts like build or run etc.
+# debug or release profile which will used for contexts like build or run etc.
 # and this is the error message for that
-mode_error := '"mode" must be either "debug" or "release"'
+profile_error := '"profile" must be either "debug" or "release"'
 
 # default cache directory
 download_dir := './downloads'
@@ -11,10 +11,10 @@ download_dir := './downloads'
 # default export directory
 export_dir := './out'
 
-# build the binary crate in given mode
-build mode = 'debug':
+# build the binary crate in given profile
+build profile = 'debug':
 	# TODO: remove repetition
-	{{cargo}} build {{ if mode == 'debug' { '' } else if mode =~ '^r' { '--release' } else { error(mode_error) } }}
+	{{cargo}} build {{ if profile == 'debug' { '' } else if profile =~ '^r' { '--release' } else { error(profile_error) } }}
 
 alias b := build
 
@@ -22,8 +22,8 @@ alias b := build
 br: (build 'release')
 
 # build and then run the executable
-run mode = 'debug':
-	{{cargo}} run {{ if mode == 'debug' { '' } else if mode =~ '^r' { '--release' } else { error(mode_error) } }}
+run profile = 'debug':
+	{{cargo}} run {{ if profile == 'debug' { '' } else if profile =~ '^r' { '--release' } else { error(profile_error) } }}
 
 alias r := run
 
