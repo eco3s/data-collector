@@ -1,102 +1,101 @@
+mod config;
+mod fetch;
+mod fs_utils;
 mod r#static;
 
-use std::{error::Error, fs, path::PathBuf};
+use std::{
+	collections::HashMap, error::Error, fs, num::ParseIntError, path::PathBuf,
+};
 
 use data_collector::{
-	downloader::{
-		item::FetchBulk,
-		list::{JsonFetcher, List},
-	},
-	parse::parse_item,
+	downloader::{Cached, FetchJson, RawJsonData},
+	schema::{species::SerializableType, Id},
+	utils::iterators::KeyAndResult,
 };
-use r#static::{ITEM_ENDPOINT, LIST_ENDPOINT};
 
-const DOWNLOAD_PATH: &str = "./downloads/";
-const EXPORT_PATH: &str = "./out/";
+use crate::{
+	config::Config,
+	fetch::{FetchItem, FetchList, ItemData},
+	fs_utils::write_or_retry,
+	r#static::{
+		DOWNLOAD_PATH, EXPORT_PATH, LIST_INDEX, LIST_PATH, TOTAL_PAGES,
+	},
+};
 
-struct ListFetcher(usize);
+fn fetch_all(
+	config: &Config,
+) -> Result<HashMap<Id, <ItemData as RawJsonData>::Output>, Box<dyn Error>> {
+	let cached_list_data = FetchList::new(TOTAL_PAGES).into_data()?;
 
-impl JsonFetcher for ListFetcher {
-	type FetchError = ureq::Error;
-	type Output = List<u32>;
-
-	fn fetch(&self) -> Result<String, Self::FetchError> {
-		Ok(
-			ureq::request_url("POST", &LIST_ENDPOINT)
-				.set("Accept", "application/json")
-				.send_form(&[
-					("searchYn", "Y"),
-					("searchClsGbn", "eco"),
-					("pageUnit", &self.0.to_string()),
-				])?
-				.into_string()?,
-		)
+	if config.cache {
+		write_or_retry(&*LIST_PATH, cached_list_data.as_ref())?;
 	}
-}
 
-struct FetchBulkItem {
-	urls: Vec<u32>,
-}
+	let cached_list: Vec<Id> = cached_list_data.parse()?.into();
 
-impl FetchBulk for FetchBulkItem {
-	type Error = ureq::Error;
-	type Output = String;
-	type Url = u32;
+	let cached_items = fs::read_dir(*DOWNLOAD_PATH)?
+		.into_iter()
+		.map(|e| e.unwrap())
+		.filter(|e| e.file_type().unwrap().is_file())
+		.map(|e| {
+			e.path()
+				.file_stem()
+				.unwrap()
+				.to_str()
+				.unwrap()
+				.to_owned()
+		})
+		.filter(|f| f != LIST_INDEX)
+		.map(|s| s.parse::<Id>())
+		.collect::<Result<Vec<_>, ParseIntError>>()?;
 
-	fn get_urls(&self) -> &Vec<Self::Url> { &self.urls }
+	let items_data: HashMap<Id, ItemData> = cached_list
+		.iter()
+		.map(|&i| {
+			KeyAndResult((
+				i,
+				FetchItem::new(i, cached_items.contains(&i)).into_data(),
+			))
+		})
+		.collect::<Result<HashMap<Id, ItemData>, <FetchItem as FetchJson>::Error>>(
+		)?;
 
-	fn into_urls(self) -> Vec<Self::Url> { self.urls }
-
-	fn new(urls: Vec<Self::Url>) -> Self { Self { urls } }
-
-	fn fetch(url: &Self::Url) -> Result<Self::Output, Self::Error> {
-		Ok(
-			ureq::request_url("POST", &ITEM_ENDPOINT)
-				.set("Accept", "application/json")
-				.send_form(&[
-					("clsSno", &url.to_string()),
-					("searchClsGbn", "eco"),
-				])?
-				.into_string()?,
-		)
+	if config.cache {
+		for (index, data) in items_data.iter() {
+			if config.cache {
+				write_or_retry(
+					DOWNLOAD_PATH.join(PathBuf::from(*index)),
+					data.as_ref(),
+				)?;
+			}
+		}
 	}
+
+	Ok(items_data
+		.iter()
+		.map(|(&i, d)| KeyAndResult((i, d.parse())))
+		.collect::<Result<_, _>>()?)
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-	let path = PathBuf::from(DOWNLOAD_PATH);
-	let export_path = PathBuf::from(EXPORT_PATH);
-	fs::create_dir_all(path.as_path())?;
-	fs::create_dir_all(export_path.as_path())?;
+	let config = Config {
+		cache: true,
+		file_type: SerializableType::Json,
+	};
 
-	let list_fetcher = ListFetcher(35);
-	let list = list_fetcher.fetch_and_parse()?.into();
+	let map = fetch_all(&config)?;
 
-	let fetch_bulk_item = FetchBulkItem::new(list);
-	let items = fetch_bulk_item.fetch_all()?;
-
-	for (key, item) in items.iter() {
-		let data = parse_item(item)?;
-
-		let mut file_path = path.clone();
-		file_path.push(format!("{key}.json"));
-		fs::write(file_path, item)?;
-
-		let mut file_path = export_path.clone();
-		let file_type = data_collector::schema::SerializableType::Json;
-
-		let ext = match file_type {
-			data_collector::schema::SerializableType::Json => "json",
-			data_collector::schema::SerializableType::Yaml => "yaml",
-			data_collector::schema::SerializableType::Ron => "ron",
-			data_collector::schema::SerializableType::Sexpr => "lisp",
-		};
-
-		file_path.push(format!("{key}.{ext}"));
-		fs::write(
-			file_path,
-			data.serialize_into(file_type)?,
-		)?;
-	}
+	map.into_iter().try_for_each(
+		|(index, species)| -> Result<(), Box<dyn Error>> {
+			Ok(write_or_retry(
+				EXPORT_PATH.join(format!(
+					"{index}.{ext}",
+					ext = config.file_type.as_ref()
+				)),
+				species.serialize_into(&config.file_type)?,
+			)?)
+		},
+	)?;
 
 	Ok(())
 }

@@ -157,6 +157,7 @@ macro_rules! docs_gen {
 
 pub(crate) use docs_gen;
 
+#[allow(unused)]
 macro_rules! swap {
 	($x:expr, $y:expr) => {{
 		let tmp = $y;
@@ -165,4 +166,4 @@ macro_rules! swap {
 	}};
 }
 
-pub(crate) use swap;
+#[allow(unused)] pub(crate) use swap;
