@@ -1,4 +1,4 @@
-use data_collector::schema::species::SerializableType;
+use lib::schema::species::SerializableType;
 
 pub struct Config {
 	pub cache: bool,

@@ -54,8 +54,8 @@ checksum = "fff857943da45f546682664a79488be82e69e43c1a7a2307679ab9afb3a66d2e"
 name = "cli"
 version = "0.1.0"
 dependencies = [
- "data-collector",
  "lazy_static",
+ "lib",
  "ureq",
  "url",
 ]
@@ -110,19 +110,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "edbafec5fa1f196ca66527c1b12c2ec4745ca14b50f1ad8f9f6f720b55d11fac"
 dependencies = [
  "cfg-if",
-]
-
-[[package]]
-name = "data-collector"
-version = "0.1.0"
-dependencies = [
- "paste",
- "rayon",
- "ron",
- "serde",
- "serde-lexpr",
- "serde_json",
- "serde_yaml",
 ]
 
 [[package]]
@@ -233,6 +220,19 @@ dependencies = [
  "proc-macro-hack",
  "proc-macro2",
  "quote",
+]
+
+[[package]]
+name = "lib"
+version = "0.1.0"
+dependencies = [
+ "paste",
+ "rayon",
+ "ron",
+ "serde",
+ "serde-lexpr",
+ "serde_json",
+ "serde_yaml",
 ]
 
 [[package]]

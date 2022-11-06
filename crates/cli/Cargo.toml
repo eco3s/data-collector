@@ -6,7 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-data-collector = { path = "../lib" }
+lib = { path = "../lib" }
 ureq = { version = "2.5.0", features = ["json"] }
 url = "2.3.1"
 lazy_static = "1.4.0"
+
+
