@@ -1,19 +1,21 @@
 [package]
-name = "cli"
-description = "fetch, cache, parse, then collect alien species information"
-version.workspace = true
-authors.workspace = true
-edition.workspace = true
-readme.workspace = true
-repository.workspace = true
-license.workspace = true
-keywords.workspace = true
-categories.workspace = true
-publish.workspace = true
+	authors.workspace    = true
+	categories.workspace = true
+	description          = "fetch, cache, parse, then collect alien species information"
+	edition.workspace    = true
+	keywords.workspace   = true
+	license.workspace    = true
+	name                 = "cli"
+	publish.workspace    = true
+	readme.workspace     = true
+	repository.workspace = true
+	version.workspace    = true
 
 [dependencies]
-lib = { path = "../lib" }
-utils = { path = "../utils" }
-ureq = { version = "2.5.0", features = ["json"] }
-url = "2.3.1"
-lazy_static = "1.4.0"
+	lazy_static = "1.4.0"
+	lib = { path = "../lib" }
+	ureq = { version = "2.5.0", features = [
+		"json",
+	] }
+	url = "2.3.1"
+	utils = { path = "../utils" }

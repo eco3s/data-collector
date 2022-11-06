@@ -1,17 +1,29 @@
 [workspace]
-members = ["crates/*"]
-default-members = ["crates/cli"]
+	default-members = ["crates/cli"]
+	members         = ["crates/*"]
 
-[workspace.package]
-version = "0.1.0"
-authors = ["Abiria <abiria.dev@gmail.com>"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/eco3s/data-collector"
-license = "BSD-3-Clause"
-keywords = ["scraper", "crawler", "API", "eco"]
-categories = ["api-bindings", "command-line-utilities"]
-publish = false
+	[workspace.package]
+		authors = [
+			"Abiria <abiria.dev@gmail.com>",
+		]
+		categories = [
+			"api-bindings",
+			"command-line-utilities",
+		]
+		edition = "2021"
+		keywords = [
+			"API",
+			"crawler",
+			"eco",
+			"scraper",
+		]
+		license = "BSD-3-Clause"
+		publish = false
+		readme = "README.md"
+		repository = "https://github.com/eco3s/data-collector"
+		version = "0.1.0"
 
-[workspace.dependencies]
-serde = { version = "1.0", features = ["derive"] }
+	[workspace.dependencies]
+		serde = { version = "1.0", features = [
+			"derive",
+		] }
