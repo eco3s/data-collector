@@ -56,9 +56,11 @@ All notable changes to our data-collector
 ### Styling
 
 - Reformat all the TOML files
+- Apply Taplo formatter as a pre-commit hook
 
 ### Auto
 
+- Update `CHANGELOG.md` file
 - Update `CHANGELOG.md` file
 - Update `CHANGELOG.md` file
 
