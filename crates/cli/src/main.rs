@@ -1,6 +1,5 @@
 mod config;
 mod fetch;
-mod fs_utils;
 mod r#static;
 
 use std::{
@@ -10,13 +9,12 @@ use std::{
 use lib::{
 	downloader::{Cached, FetchJson, RawJsonData},
 	schema::{species::SerializableType, Id},
-	utils::iterators::KeyAndResult,
 };
+use utils::{fs::write_or_retry, iterators::KeyAndResult};
 
 use crate::{
 	config::Config,
 	fetch::{FetchItem, FetchList, ItemData},
-	fs_utils::write_or_retry,
 	r#static::{
 		DOWNLOAD_PATH, EXPORT_PATH, LIST_INDEX, LIST_PATH, TOTAL_PAGES,
 	},

@@ -12,3 +12,6 @@ license = "BSD-3-Clause"
 keywords = ["scraper", "crawler", "API", "eco"]
 categories = ["api-bindings", "command-line-utilities"]
 publish = false
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }

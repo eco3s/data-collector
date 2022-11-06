@@ -58,6 +58,7 @@ dependencies = [
  "lib",
  "ureq",
  "url",
+ "utils",
 ]
 
 [[package]]
@@ -233,6 +234,7 @@ dependencies = [
  "serde-lexpr",
  "serde_json",
  "serde_yaml",
+ "utils",
 ]
 
 [[package]]
@@ -551,6 +553,13 @@ dependencies = [
  "form_urlencoded",
  "idna",
  "percent-encoding",
+]
+
+[[package]]
+name = "utils"
+version = "0.1.0"
+dependencies = [
+ "serde",
 ]
 
 [[package]]

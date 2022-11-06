@@ -1,3 +1,4 @@
 pub mod deserializers;
+pub mod fs;
 pub mod iterators;
-pub(crate) mod macros;
+pub mod macros;

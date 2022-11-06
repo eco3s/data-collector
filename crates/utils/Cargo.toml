@@ -1,6 +1,6 @@
 [package]
-name = "cli"
-description = "fetch, cache, parse, then collect alien species information"
+name = "utils"
+description = "utility library for data-collector"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -12,8 +12,4 @@ categories.workspace = true
 publish.workspace = true
 
 [dependencies]
-lib = { path = "../lib" }
-utils = { path = "../utils" }
-ureq = { version = "2.5.0", features = ["json"] }
-url = "2.3.1"
-lazy_static = "1.4.0"
+serde.workspace = true
