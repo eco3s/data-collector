@@ -1,3 +1,4 @@
+#[macro_export]
 macro_rules! tree_gen {
 	(
 		@ $output:path[$item_output:path]
@@ -72,8 +73,7 @@ macro_rules! tree_gen {
 	};
 }
 
-pub(crate) use tree_gen;
-
+#[macro_export]
 macro_rules! docs_gen {
 	($name:ident[$($num:literal)->+]) => {
 		paste::paste! {
@@ -155,9 +155,7 @@ macro_rules! docs_gen {
 	};
 }
 
-pub(crate) use docs_gen;
-
-#[allow(unused)]
+#[macro_export]
 macro_rules! swap {
 	($x:expr, $y:expr) => {{
 		let tmp = $y;
@@ -165,5 +163,3 @@ macro_rules! swap {
 		($x, tmp)
 	}};
 }
-
-#[allow(unused)] pub(crate) use swap;

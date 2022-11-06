@@ -1,4 +1,5 @@
 use serde::Deserialize;
+use utils::deserializers::parse_number;
 
 use super::Id;
 
@@ -10,7 +11,7 @@ struct DeserializeList {
 
 #[derive(Deserialize, Debug)]
 struct DeserializeItem {
-	#[serde(deserialize_with = "crate::utils::deserializers::parse_number")]
+	#[serde(deserialize_with = "parse_number")]
 	cls_sno: Id,
 }
 

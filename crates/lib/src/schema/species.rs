@@ -4,6 +4,10 @@ use std::{
 };
 
 use serde::{Deserialize, Serialize};
+use utils::{
+	deserializers::{empty_string_to_none, parse_number, split_string},
+	docs_gen, tree_gen,
+};
 
 use super::Id;
 
@@ -134,48 +138,34 @@ pub enum Data {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AnimalAppearance {
 	#[serde(rename(deserialize = "li_f_spac"))]
-	#[serde(
-		deserialize_with = "crate::utils::deserializers::empty_string_to_none"
-	)]
+	#[serde(deserialize_with = "empty_string_to_none")]
 	description: Option<String>,
 
 	#[serde(rename(deserialize = "li_f_comp"))]
-	#[serde(
-		deserialize_with = "crate::utils::deserializers::empty_string_to_none"
-	)]
+	#[serde(deserialize_with = "empty_string_to_none")]
 	comparison: Option<String>,
 
 	#[serde(rename(deserialize = "li_f_sub"))]
-	#[serde(
-		deserialize_with = "crate::utils::deserializers::empty_string_to_none"
-	)]
+	#[serde(deserialize_with = "empty_string_to_none")]
 	subspecies: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PlantFlower {
 	#[serde(rename(deserialize = "flw"))]
-	#[serde(
-		deserialize_with = "crate::utils::deserializers::empty_string_to_none"
-	)]
+	#[serde(deserialize_with = "empty_string_to_none")]
 	description: Option<String>,
 
 	#[serde(rename(deserialize = "flwcolor"))]
-	#[serde(
-		deserialize_with = "crate::utils::deserializers::empty_string_to_none"
-	)]
+	#[serde(deserialize_with = "empty_string_to_none")]
 	color: Option<String>,
 
 	#[serde(rename(deserialize = "flwseq"))]
-	#[serde(
-		deserialize_with = "crate::utils::deserializers::empty_string_to_none"
-	)]
+	#[serde(deserialize_with = "empty_string_to_none")]
 	sequence: Option<String>,
 
 	#[serde(rename(deserialize = "flwseq_desc"))]
-	#[serde(
-		deserialize_with = "crate::utils::deserializers::empty_string_to_none"
-	)]
+	#[serde(deserialize_with = "empty_string_to_none")]
 	sequence_description: Option<String>,
 }
 
@@ -194,10 +184,10 @@ impl From<DeserializeName> for LocalName {
 	}
 }
 
-crate::utils::macros::tree_gen! {
+tree_gen! {
 	@TaxonomicTree[LocalNamePartial]
 	(DeserializeTaxonomic) Tree {
-	#[serde(deserialize_with = "crate::utils::deserializers::empty_string_to_none")]
+	#[serde(deserialize_with = "empty_string_to_none")]
 		200 |> Phylum
 		300 |> Class
 		400 |> Order
@@ -206,7 +196,7 @@ crate::utils::macros::tree_gen! {
 	}
 }
 
-crate::utils::macros::docs_gen! {
+docs_gen! {
 	Docs [1 -> 2 -> 3 -> 4 -> 5]
 }
 
@@ -219,7 +209,7 @@ struct Common {
 	scientific_name: String,
 
 	#[serde(rename(deserialize = "cls_sno"))]
-	#[serde(deserialize_with = "crate::utils::deserializers::parse_number")]
+	#[serde(deserialize_with = "parse_number")]
 	id: Id,
 
 	#[serde(flatten)]
@@ -237,7 +227,7 @@ struct Common {
 	ktsn: String,
 
 	#[serde(rename(deserialize = "national_gbn_nm"))]
-	#[serde(deserialize_with = "crate::utils::deserializers::split_string")]
+	#[serde(deserialize_with = "split_string")]
 	government_designation: Vec<String>,
 }
 
