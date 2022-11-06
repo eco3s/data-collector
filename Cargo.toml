@@ -1,2 +1,14 @@
 [workspace]
 members = ["crates/*"]
+default-members = ["crates/cli"]
+
+[workspace.package]
+version = "0.1.0"
+authors = ["Abiria <abiria.dev@gmail.com>"]
+edition = "2021"
+readme = "README.md"
+repository = "https://github.com/eco3s/data-collector"
+license = "BSD-3-Clause"
+keywords = ["scraper", "crawler", "API", "eco"]
+categories = ["api-bindings", "command-line-utilities"]
+publish = false
