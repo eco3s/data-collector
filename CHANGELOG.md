@@ -30,6 +30,9 @@ All notable changes to our data-collector
 - Add `CHANGELOG.md` and setup git-cliff
 - Add workflow updating changelog automatically
 - Ignore `downloads` and `out` directories
+- Update dependencies
+- Rename all `mode` into `profile`
+- Merge branch 'main' of https://github.com/eco3s/data-collector
 
 ### Refactor
 
@@ -41,6 +44,14 @@ All notable changes to our data-collector
 - Extracted constants into separate module
 - Implement `fetch_all` method by default
 - Reimbursement `FromIterator`
+
+### Styling
+
+- Reformat all the TOML files
+
+### Auto
+
+- Update `CHANGELOG.md` file
 
 ### Build
 
