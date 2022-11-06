@@ -7,7 +7,7 @@ use std::{
 	collections::HashMap, error::Error, fs, num::ParseIntError, path::PathBuf,
 };
 
-use data_collector::{
+use lib::{
 	downloader::{Cached, FetchJson, RawJsonData},
 	schema::{species::SerializableType, Id},
 	utils::iterators::KeyAndResult,

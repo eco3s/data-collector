@@ -1,6 +1,6 @@
 use std::{fs, path::PathBuf};
 
-use data_collector::{
+use lib::{
 	downloader::{Cached, FetchJson, RawJsonData},
 	schema::{Id, List, Species},
 };
